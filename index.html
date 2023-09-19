@@ -7,14 +7,34 @@
 
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet">
 </head>
 <body>
     
     <div class="container">
-        <div class="player-turn"></div>
+        <dialog class="menu-modal">
+            <div>Play Against</div>
+            <button class="pvp">Another Player</button>
+            <button class="pve">The Computer</button>
+        </dialog>
 
-        <div class="gameboard">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="players">
+            <div class="player p-one">
+                <p>Player 1</p>
+                <p>X</p>
+            </div>
+            <div class="player p-two">
+                <p>Player 2</p>
+                <p>O</p>
+            </div>
         </div>
+        <div class="gameboard"></div>
+        <div class="win-message"></div>
+        
     </div>
     
 </body>

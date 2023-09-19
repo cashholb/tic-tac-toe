@@ -1,27 +1,106 @@
+:root {
+    font-family: "Poppins", sans-serif;
+    --chalk-board: #497959;
+    --background-color: #777da7;
+}
+
+button {
+    font-family: "Poppins", sans-serif;
+    font-size: 2rem;
+}
+
+button:hover{
+    cursor: pointer;
+}
+
 body {
+    font-size: 4rem;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+.menu-modal {
+    text-align: center;
+    border-color: rgb(42, 42, 42);
+    border-radius: 10px;
+}
+
+.menu-modal button {
+    color: white;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.menu-modal .pvp {
+    background-color: #885053;
+}
+
+.menu-modal .pve {
+    background-color: #777da7;
+}
+
+h1 {
+    font-size: 5rem;
 }
 
 .container{
     width: 100vw;
     height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 25px;
+    flex-direction: column;
+}
+
+.players {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15vw;
+
+    color: white;
+    text-align: center;
+}
+
+.player p {
+    padding: 0;
+    margin: 0;
+}
+
+.p-one {
+    color:  #fe5f55;
+}
+
+.p-two {
+    color: #94c9a9;
 }
 
 .gameboard {
-    background-color: rgb(194, 194, 194);
     display: grid;
-    grid-template-columns: repeat(3, 50px);
-    grid-template-rows: repeat(3, 50px);
+    grid-template-columns: repeat(3, minmax(20px, 100px));
+    grid-template-rows: repeat(3, minmax(20px, 100px));
+    gap: 10px;
 }
 
 .cell {
     text-align: center;
     box-sizing: border-box;
-    border: solid black;
+    border: none;
+    font-size: 5rem;
+    border-radius: 10px;
+}
+
+.restart-btn {
+    text-align: center;
+    box-sizing: border-box;
+    font-weight: 200;
+
+    background: none;
+    border: none;
+    border-radius: 10px;
+    font-family: "Poppins", sans-serif;
+    font-size: 3rem;
+    margin-top:  2vh;
+    padding: 10px;
+    box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
 }

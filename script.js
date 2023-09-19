@@ -40,7 +40,7 @@ function Gameboard() {
 function Cell() {
 
     // value
-    let value = 0;
+    let value = "";
 
     // getter 
     const getValue = () => value;
@@ -59,11 +59,11 @@ function GameController() {
     const players = [
         {
             name: "Player One",
-            token: 1,
+            token: "X",
         },
         {
             name: "Player Two",
-            token: 2,
+            token: "O",
         },
     ];
     let activePlayer = players[0];
@@ -80,7 +80,7 @@ function GameController() {
         console.log(`It is ${getActivePlayer().name}'s turn`);
     };
 
-    const _checkWin = () => {
+    const checkWin = () => {
         const tokenToCheck = getActivePlayer().token;
         const currBoard = board.getBoard();
 
@@ -131,7 +131,7 @@ function GameController() {
             console.log("space already taken, make another choice");
         }else{
 
-            if(_checkWin())
+            if(checkWin())
             {
                 board.printBoard();
                 _printWin();
@@ -145,7 +145,7 @@ function GameController() {
 
     _printNewRound();
 
-    return {playTurn, getActivePlayer, getBoard: board.getBoard, getSpaces: board.getSpaces};
+    return {playTurn, getActivePlayer, checkWin, getBoard: board.getBoard, getSpaces: board.getSpaces};
 }
 
 
@@ -157,6 +157,14 @@ function GameController() {
     const playerTurnDiv = document.querySelector(".player-turn");
     const gameboardDiv = document.querySelector(".gameboard");
 
+    // initialize modal
+    const modalDiv = document.querySelector(".menu-modal");
+    const closeModalDiv = document.querySelector(".pvp");
+    modalDiv.showModal();
+    closeModalDiv.addEventListener("click", () => {
+        modalDiv.close();
+    })
+
     const updateScreen = () => {
 
         // clear the board
@@ -166,26 +174,45 @@ function GameController() {
         const currPlayer = game.getActivePlayer();
 
         // display current player's turn
-        playerTurnDiv.textContent = currPlayer.name;
+        
 
         // populate game board
         for(let i = 0; i < game.getSpaces(); i++)
         {
             const cell = document.createElement('button');
-            cell.classList.add('.cell');
+            cell.classList.add('cell');
             cell.textContent = board[i].getValue();
-            cell.onclick = clickEventHandler;
+            cell.onclick = moveEventHandler;
+
+            if(board[i].getValue() == "X")
+            {
+                cell.style.color = "#fe5f55";
+            }else if(board[i].getValue() == "O"){
+                cell.style.color = "#94c9a9";
+            }
+
             gameboardDiv.appendChild(cell);
         }
     }
 
-    const clickEventHandler = (e) => {
+    const moveEventHandler = (e) => {
         const clickedCell = e.target;
         const cellIndex = Array.from(gameboardDiv.children).indexOf(clickedCell);
 
         game.playTurn(cellIndex);
         updateScreen();
+
+        // check win
+        if(game.checkWin()) {
+            const winDiv = document.querySelector(".win-message");
+            winDiv.textContent = `${game.getActivePlayer().name} wins!`;
+
+            // remove ability to place new move
+            Array.from(gameboardDiv.children).map((cell) => cell.onclick = "");
+        }
     }
+
+    
 
     updateScreen();
 
