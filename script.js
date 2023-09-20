@@ -25,7 +25,12 @@ function Gameboard() {
             return false;
         }
     };
-    
+
+    const clearBoard = () => {
+        for(let i = 0; i < spaces; i++){
+            board[i] = Cell();
+        }
+    }
 
     // create a printBoard
     const printBoard = () => {
@@ -35,7 +40,7 @@ function Gameboard() {
     };
 
     // return public getter, fillSpace, and printBoard
-    return {getBoard, getSpaces, makeMove, printBoard};
+    return {getBoard, clearBoard, getSpaces, makeMove, printBoard};
 }
 
 function Cell() {
@@ -61,15 +66,17 @@ function GameController() {
 
     const players = [
         {
-            name: "Player One",
+            name: "Player 1",
             token: "X",
         },
         {
-            name: "Player Two",
+            name: "Player 2",
             token: "O",
         },
     ];
     let activePlayer = players[0];
+
+    const getPlayers = () => players;
 
     const setGameType = (gt) => gameType = gt;
 
@@ -129,9 +136,27 @@ function GameController() {
         return false;
     };
 
+    const checkTie = () => {
+        const currBoard = board.getBoard();
+
+        for(let i = 0; i < currBoard.length; i++) {
+            if(currBoard[i].getValue() == "")
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     const _printWin =  () => {
         console.log("Game Over");
         console.log(`${activePlayer.name} won!`);
+    }
+
+    const _printTie = () => {
+        console.log("Game Over");
+        console.log("It's a draw");
     }
 
     const startGame = (gameType) => {
@@ -176,6 +201,9 @@ function GameController() {
                 board.printBoard();
                 _printWin();
                 return;
+            }else if(checkTie()){
+                _printTie();
+                return;
             }
             _switchPlayerTurn();
         }
@@ -187,7 +215,7 @@ function GameController() {
         }
     };
 
-    return {getGameType, setGameType, startGame, playTurn, getActivePlayer, checkWin, getBoard: board.getBoard, getSpaces: board.getSpaces};
+    return {getGameType, setGameType, startGame, playTurn, getPlayers, getActivePlayer, checkWin, checkTie, getBoard: board.getBoard, getSpaces: board.getSpaces, clearBoard: board.clearBoard};
 }
 
 (function ScreenController() {
@@ -195,11 +223,19 @@ function GameController() {
     const game = GameController();
 
     const playerTurnDiv = document.querySelector(".player-turn");
+    const playerOneDiv = document.querySelector('.p-one');
+    const playerTwoDiv = document.querySelector('.p-two');
     const gameboardDiv = document.querySelector(".gameboard");
-
-    // initialize modal
+    const restartDiv = document.querySelector(".restart-btn");
     const modalDiv = document.querySelector(".menu-modal");
-    modalDiv.showModal();
+    const winDiv = document.querySelector(".win-message");
+
+    restartDiv.addEventListener("click", () => {
+        game.clearBoard();
+        updateScreen();
+        winDiv.textContent = "";
+        modalDiv.showModal();
+    });
 
     const pvpDiv = document.querySelector(".pvp");
     pvpDiv.addEventListener("click", () => {
@@ -219,11 +255,16 @@ function GameController() {
 
     const updateScreen = () => {
 
+
         // clear the board
         gameboardDiv.innerHTML = "";
 
         const board = game.getBoard();
         const currPlayer = game.getActivePlayer();
+
+        // display player names
+        playerOneDiv.querySelector(".name").textContent = game.getPlayers()[0].name;
+        playerTwoDiv.querySelector(".name").textContent = game.getPlayers()[1].name;
 
         // display current player's turn
         
@@ -256,14 +297,16 @@ function GameController() {
 
         // check win
         if(game.checkWin()) {
-            const winDiv = document.querySelector(".win-message");
             winDiv.textContent = `${game.getActivePlayer().name} wins!`;
 
             // remove ability to place new move
             Array.from(gameboardDiv.children).map((cell) => cell.onclick = "");
+        }else if (game.checkTie()){
+            winDiv.textContent = `It's a draw!`;
+            Array.from(gameboardDiv.children).map((cell) => cell.onclick = "");
         }
     }
 
-    
+    modalDiv.showModal();
     updateScreen();
 })();

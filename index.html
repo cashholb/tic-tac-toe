@@ -16,25 +16,40 @@
     
     <div class="container">
         <dialog class="menu-modal">
-            <div>Play Against</div>
-            <button class="pvp">Another Player</button>
-            <button class="pve-easy">The Computer</button>
+            <h1>Tic-Tac-Toe</h1>
+            <p>Play Against</p>
+            <div class="modal-buttons">
+                <button class="pvp">Another Player</button>
+                <button class="pve-easy">The Computer</button>
+            </div>
+            <div class="modal-footer">
+                <p>By Cashton Holbert</p>
+                <a href="https://github.com/cashholb/tic-tac-toe">
+                    <img src="./github-mark.png" alt="github logo that links to cashholb's github">
+                </a>
+            </div>
         </dialog>
 
         <h1>Tic-Tac-Toe</h1>
         <div class="players">
             <div class="player p-one">
-                <p>Player 1</p>
-                <p>X</p>
+                <p class="name">Player 1</p>
+                <p class="token">X</p>
             </div>
             <div class="player p-two">
-                <p>Player 2</p>
-                <p>O</p>
+                <p class="name">Player 2</p>
+                <p class="token">O</p>
             </div>
         </div>
         <div class="gameboard"></div>
-        <div class="win-message"></div>
-        
+        <button class="restart-btn">restart</button>
+        <p class="win-message"></p>
+        <div class="footer">
+            <div>Made by Cashton Holbert</div>
+            <a href="https://github.com/cashholb/tic-tac-toe">
+                <img src="./github-mark.png" alt="github logo that links to cashholb's github">
+            </a>
+        </div>
     </div>
     
 </body>
