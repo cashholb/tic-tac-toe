@@ -17,7 +17,7 @@ function Gameboard() {
     // create fill space for Gameboard
     const makeMove = (position, playerToken) => {
 
-        if(board[position].getValue() == 0)
+        if(board[position].getValue() == "")
         {
             board[position].setValue(playerToken);
             return true;
@@ -25,6 +25,7 @@ function Gameboard() {
             return false;
         }
     };
+    
 
     // create a printBoard
     const printBoard = () => {
@@ -56,6 +57,8 @@ function GameController() {
 
     const board = Gameboard();
 
+    let gameType = "PVP";
+
     const players = [
         {
             name: "Player One",
@@ -68,6 +71,13 @@ function GameController() {
     ];
     let activePlayer = players[0];
 
+    const setGameType = (gt) => gameType = gt;
+
+    const getGameType = () => gameType;
+
+    const _setActivePlayer = (playerNumber) => {
+        activePlayer = players[playerNumber];
+    }
 
     const getActivePlayer = () => activePlayer;
 
@@ -124,6 +134,36 @@ function GameController() {
         console.log(`${activePlayer.name} won!`);
     }
 
+    const startGame = (gameType) => {
+
+        _setActivePlayer(Math.floor(Math.random() * players.length));
+
+        if(gameType == "PVP") {
+            players[1].name = "Player 2";
+        }else if(gameType == "PVE_EASY"){
+            players[1].name = "Computer";
+            if(getActivePlayer() == players[1])
+                easyCompMove();
+        }
+    }
+
+    const easyCompMove = () => {
+
+        // easy computer turn logic (random choice)
+        let choicesArray = [];
+        for(let i = 0; i < board.getBoard().length; i++)
+        {
+            if(board.getBoard()[i].getValue() == "")
+            {
+                choicesArray.push(i);
+            }
+        }
+        
+        //let choicesArray = board.getBoard().filter((cell) => cell.getValue() != "");
+        const compMove = choicesArray[Math.floor(Math.random() * (choicesArray.length - 1))];
+        playTurn(compMove);
+    }
+
     const playTurn = (move) => {
         // make move
         if(!board.makeMove(move, activePlayer.token)) {
@@ -141,14 +181,14 @@ function GameController() {
         }
 
         _printNewRound();
+
+        if(gameType == "PVE_EASY" && activePlayer == players[1]){
+            easyCompMove();
+        }
     };
 
-    _printNewRound();
-
-    return {playTurn, getActivePlayer, checkWin, getBoard: board.getBoard, getSpaces: board.getSpaces};
+    return {getGameType, setGameType, startGame, playTurn, getActivePlayer, checkWin, getBoard: board.getBoard, getSpaces: board.getSpaces};
 }
-
-
 
 (function ScreenController() {
 
@@ -159,9 +199,21 @@ function GameController() {
 
     // initialize modal
     const modalDiv = document.querySelector(".menu-modal");
-    const closeModalDiv = document.querySelector(".pvp");
     modalDiv.showModal();
-    closeModalDiv.addEventListener("click", () => {
+
+    const pvpDiv = document.querySelector(".pvp");
+    pvpDiv.addEventListener("click", () => {
+        game.setGameType("PVP");
+        game.startGame(game.getGameType());
+        updateScreen();
+        modalDiv.close();
+    })
+
+    const pveEasyDiv = document.querySelector(".pve-easy");
+    pveEasyDiv.addEventListener("click", () => {
+        game.setGameType("PVE_EASY");
+        game.startGame(game.getGameType());
+        updateScreen();
         modalDiv.close();
     })
 
@@ -213,9 +265,5 @@ function GameController() {
     }
 
     
-
     updateScreen();
-
 })();
-
-
