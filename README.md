@@ -1,6 +1,8 @@
 # tic-tac-toe
 A tic-tac-toe web application made in html/css/js
 
+**Live Demo:** [cashholb.github.io/tic-tac-toe/](https://cashholb.github.io/tic-tac-toe/)
+
 ## Play...
 - against a your Friends in one on one play
 - against a rogue Computer choosing at random
