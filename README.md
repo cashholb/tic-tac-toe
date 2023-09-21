@@ -13,3 +13,7 @@ A tic-tac-toe web application made in html/css/js
 - how to make a perfect AI opponent with the minimax algorithm and pseudo alpha-beta pruning
 - how to make effective use of factory functions and moduals
 - media queries to accomidate many screen sizes
+
+
+
+<br>Favicon by: <a href="https://www.flaticon.com/free-icons/toy" title="toy icons">Toy icons created by Freepik - Flaticon</a>
