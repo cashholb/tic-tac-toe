@@ -208,12 +208,13 @@ a img {
         font-size: 2.3rem;
         width: 50px; /* Adjust the width to fit within the smaller grid */
         height: 50px;
-        column-gap: 10px;
+        
     }
 
     .gameboard {
         grid-template-columns: repeat(3, minmax(20px, 50px));
         grid-template-rows: repeat(3, minmax(20px, 50px));
+        gap: 15px;
     }
 
     .win-message {
