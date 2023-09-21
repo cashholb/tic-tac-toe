@@ -92,10 +92,14 @@ a img {
 
 .container{
 
+    height: 90vh;
+    width: 100vw;
+
     display: flex;
-    align-items: center;
     flex-direction: column;
-    justify-content: space-between;
+
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .players {
@@ -152,6 +156,7 @@ a img {
 }
 
 .win-message {
+    text-align: center;
     font-size: 4rem;
     padding: 0;
     margin: 0;
@@ -163,8 +168,12 @@ a img {
     height: 2.5rem; 
     background-color: white;
 
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 2.5rem;    
+
     display: flex;
-    flex: 1;
     justify-content: center;
     align-items: center;
     font-size: 2rem;
@@ -172,22 +181,31 @@ a img {
 }
 
 @media only screen and (max-width: 669px) {
-    .menu-modal-container h1 {
-        font-size: 2rem;
+    .menu-modal h1 {
+        font-size: 2.5rem;
         margin: 0;
         text-align: center;
     }
 
-    button {
+    .modal-buttons button {
         font-size: 1rem;
-    }
-
-    .players{
-        gap: 0;
+        padding: 8px;
     }
 
     .menu-modal-container p {
         margin: 0;
+    }
+
+    .header {
+        font-size: 3rem;
+    }
+
+    .player {
+        font-size: 2.5rem;
+    }
+
+    .cell {
+        font-size: 2.3rem;
     }
 
     .gameboard {
@@ -195,11 +213,9 @@ a img {
         grid-template-rows: repeat(3, minmax(20px, 50px));
     }
 
-    .cell {
-        font-size: 3.75rem;
+    .win-message {
+        font-size: 2rem;
     }
-
-    
 
     .menu-modal .modal-footer,
     .players,
