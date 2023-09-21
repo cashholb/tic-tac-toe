@@ -167,8 +167,12 @@ function GameController() {
 
         if(gameType == "PVP") {
             players[1].name = "Player 2";
-        }else if(gameType == "PVE_EASY" || gameType == "PVE_IMPOSSIBLE"){
+        }else if(gameType == "PVE_EASY"){
             players[1].name = "Computer";
+            if(getActivePlayer() == players[1])
+                easyCompMove();
+        }else if(gameType == "PVE_IMPOSSIBLE"){
+            players[1].name = "Adversary";
             if(getActivePlayer() == players[1])
                 easyCompMove();
         }
@@ -195,6 +199,7 @@ function GameController() {
 
         let currBoard = board.getBoard();
         let bestScore = -Infinity;
+        let lowestDepth = Infinity;
         let bestMove;
 
         for(let i = 0; i < currBoard.length; i++) {
@@ -202,13 +207,11 @@ function GameController() {
 
                 // first children of the tree
                 currBoard[i].setValue(players[1].token);
-                let score = _miniMax(currBoard, 0, false);
-                let bruh = currBoard.map((cell) => cell.getValue());
-                console.log(bruh);
-                
+                let scoreAndDepth = _miniMax(currBoard, 0, false);
                 currBoard[i].clearValue();
-                if(score > bestScore) {
-                    bestScore = score;
+                if(scoreAndDepth[0] > bestScore || (scoreAndDepth[0] == bestScore && scoreAndDepth[1] < lowestDepth)){
+                    bestScore = scoreAndDepth[0];
+                    lowestDepth = scoreAndDepth[1];
                     bestMove = i;
                 }
             }
@@ -216,50 +219,50 @@ function GameController() {
         playTurn(bestMove);
     }
 
-    const _miniMax = (currBoard, isMaximizing) => {
+    const _miniMax = (currBoard, depth, isMaximizing) => {
 
-        // check for winner
         // check for terminal state and associated score
         // to be refactored if there's more than 2 players
-
         if(checkWin(players[0])){
-            return -1
+            return [-1, depth];
         }
         if(checkWin(players[1])){
-            return 1;
+            return [1, depth];
         }
         if(checkTie()){
-            return 0;
+            return [0, depth];
         }
 
         // for maximizing player
         if (isMaximizing) {
+            let scoreAndDepth = [-Infinity, Infinity];
             let bestScore = -Infinity;
             // check all possible spots
             for (let i = 0; i < currBoard.length; i++){
                 if(currBoard[i].getValue() == "")
                 {
                     currBoard[i].setValue(players[1].token);
-                    let score =_miniMax(currBoard, false);
+                    scoreAndDepth =_miniMax(currBoard, depth + 1, false);
                     currBoard[i].clearValue();
-                    bestScore = Math.max(score, bestScore);
+                    bestScore = Math.max(scoreAndDepth[0], bestScore);
                 }
             }
-            return bestScore;
+            return [bestScore, scoreAndDepth[1]];
         }else{
             // for minimizing player
+            let scoreAndDepth = [Infinity, Infinity];
             let bestScore = Infinity;
             // check all possible spots
             for (let i = 0; i < currBoard.length; i++){
                 if(currBoard[i].getValue() == "")
                 {
                     currBoard[i].setValue(players[0].token);
-                    let score = _miniMax(currBoard, true);
+                    scoreAndDepth = _miniMax(currBoard, depth + 1, true);
                     currBoard[i].clearValue();
-                    bestScore = Math.min(score, bestScore);
+                    bestScore = Math.min(scoreAndDepth[0], bestScore);
                 }
             }
-            return bestScore;
+            return [bestScore, scoreAndDepth[1]];
         }
     }
 
@@ -350,8 +353,45 @@ function GameController() {
         const currPlayer = game.getActivePlayer();
 
         // display player names
-        playerOneDiv.querySelector(".name").textContent = game.getPlayers()[0].name;
-        playerTwoDiv.querySelector(".name").textContent = game.getPlayers()[1].name;
+        console.log(window.screen.width);
+        if(window.screen.width < 669){
+            document.getElementById("playAgainst").textContent = "";
+            document.getElementById("madeByModal").textContent = "";
+            document.getElementById("madeByFooter").textContent = "";
+
+            if(currPlayer.name == "Player 1") {
+                playerOneDiv.querySelector(".name").textContent = game.getPlayers()[0].name;
+                playerOneDiv.querySelector(".token").textContent = game.getPlayers()[0].token;
+                playerTwoDiv.querySelector(".name").textContent = "";
+                playerTwoDiv.querySelector(".token").textContent = "";
+
+            }else{
+                playerOneDiv.querySelector(".name").textContent = "";
+                playerOneDiv.querySelector(".token").textContent = "";
+                playerTwoDiv.querySelector(".name").textContent = game.getPlayers()[1].name;
+                playerTwoDiv.querySelector(".token").textContent = game.getPlayers()[1].token;
+            }
+        }else{
+            document.getElementById("playAgainst").textContent = "Play against";
+            document.getElementById("madeByModal").textContent = "Made by Cashton Holbert";
+            document.getElementById("madeByFooter").textContent = "Made by Cashton Holbert";
+
+            playerOneDiv.querySelector(".name").textContent = game.getPlayers()[0].name;
+            playerOneDiv.querySelector(".token").textContent = game.getPlayers()[0].token;
+
+            playerTwoDiv.querySelector(".name").textContent = game.getPlayers()[1].name;
+            playerTwoDiv.querySelector(".token").textContent = game.getPlayers()[1].token;
+
+
+            if(currPlayer.name == "Player 1") {
+                playerOneDiv.style.opacity = 1;
+                playerTwoDiv.style.opacity = 0.5;
+            }else{
+                playerOneDiv.style.opacity = 0.5;
+                playerTwoDiv.style.opacity = 1;
+            }
+        }
+        
 
         // display current player's turn
         
@@ -384,12 +424,17 @@ function GameController() {
 
         // check win
         if(game.checkWin(game.getActivePlayer())) {
+
             winDiv.textContent = `${game.getActivePlayer().name} wins!`;
 
             // remove ability to place new move
             Array.from(gameboardDiv.children).map((cell) => cell.onclick = "");
         }else if (game.checkTie()){
-            winDiv.textContent = `It's a draw!`;
+            if(game.getGameType() == "PVE_IMPOSSIBLE"){
+                winDiv.textContent = `You'll never win!`;
+            }else{
+                winDiv.textContent = `It's a draw!`;
+            }
             Array.from(gameboardDiv.children).map((cell) => cell.onclick = "");
         }
     }

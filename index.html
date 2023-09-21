@@ -16,37 +16,39 @@
     
     <div class="container">
         <dialog class="menu-modal">
-            <h1>Tic-Tac-Toe</h1>
-            <p>Play Against</p>
-            <div class="modal-buttons">
-                <button class="pve-easy">The Computer</button>
-                <button class="pve-impossible">The Adversary</button>
-                <button class="pvp">Another Player</button>
-            </div>
-            <div class="modal-footer">
-                <p>Made by Cashton Holbert</p>
-                <a href="https://github.com/cashholb/tic-tac-toe">
-                    <img src="./github-mark.png" alt="github logo that links to cashholb's github">
-                </a>
+            <div class="menu-modal-container">
+                <h1>Tic-Tac-Toe</h1>
+                <p id="playAgainst">Play Against</p>
+                <div class="modal-buttons">
+                    <button class="pve-easy">The Computer</button>
+                    <button class="pve-impossible">The Adversary</button>
+                    <button class="pvp">Another Player</button>
+                </div>
+                <div class="modal-footer">
+                    <p id="madeByModal">Made by Cashton Holbert</p>
+                    <a href="https://github.com/cashholb/tic-tac-toe">
+                        <img src="./github-mark.png" alt="github logo that links to cashholb's github">
+                    </a>
+                </div>
             </div>
         </dialog>
 
         <h1>Tic-Tac-Toe</h1>
         <div class="players">
             <div class="player p-one">
-                <p class="name">Player 1</p>
-                <p class="token">X</p>
+                <div class="name">Player 1</div>
+                <div class="token">X</div>
             </div>
             <div class="player p-two">
-                <p class="name">Player 2</p>
-                <p class="token">O</p>
+                <div class="name">Player 2</div>
+                <div class="token">O</div>
             </div>
         </div>
         <div class="gameboard"></div>
         <button class="restart-btn">restart</button>
         <p class="win-message"></p>
         <div class="footer">
-            <div>Made by Cashton Holbert</div>
+            <div id="madeByFooter">Made by Cashton Holbert</div>
             <a href="https://github.com/cashholb/tic-tac-toe">
                 <img src="./github-mark.png" alt="github logo that links to cashholb's github">
             </a>
