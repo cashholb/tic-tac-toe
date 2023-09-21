@@ -42,15 +42,22 @@ body {
 
 .modal-buttons {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
     gap: 10px;
 }
 
 .menu-modal .pvp {
-    background-color: #885053;
+    background-color: #e9afa3;
 }
 
 .menu-modal .pve-easy {
     background-color: #777da7;
+}
+
+.menu-modal .pve-impossible {
+    background-color: #885053;
 }
 
 .menu-modal .modal-footer {

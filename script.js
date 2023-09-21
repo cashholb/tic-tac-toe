@@ -54,9 +54,13 @@ function Cell() {
     // setter
     const setValue = (newValue) => value = newValue;
 
+    const clearValue = () => setValue("");
+
     // return public getter and setter
-    return {getValue, setValue};
+    return {getValue, setValue, clearValue};
 }
+
+
 
 function GameController() {
 
@@ -97,13 +101,11 @@ function GameController() {
         console.log(`It is ${getActivePlayer().name}'s turn`);
     };
 
-    const checkWin = () => {
-        const tokenToCheck = getActivePlayer().token;
+    const checkWin = (player) => {
+        const tokenToCheck = player.token;
         const currBoard = board.getBoard();
 
         // check vertical
-        console.log(tokenToCheck);
-        console.log(currBoard[0]);
         if(currBoard[0].getValue() == tokenToCheck && currBoard[1].getValue() == tokenToCheck && currBoard[2].getValue() == tokenToCheck){
             return true;
         }
@@ -165,13 +167,14 @@ function GameController() {
 
         if(gameType == "PVP") {
             players[1].name = "Player 2";
-        }else if(gameType == "PVE_EASY"){
+        }else if(gameType == "PVE_EASY" || gameType == "PVE_IMPOSSIBLE"){
             players[1].name = "Computer";
             if(getActivePlayer() == players[1])
                 easyCompMove();
         }
     }
 
+    // takes a random possible move
     const easyCompMove = () => {
 
         // easy computer turn logic (random choice)
@@ -184,9 +187,80 @@ function GameController() {
             }
         }
         
-        //let choicesArray = board.getBoard().filter((cell) => cell.getValue() != "");
         const compMove = choicesArray[Math.floor(Math.random() * (choicesArray.length - 1))];
         playTurn(compMove);
+    }
+
+    const adversaryMove = () => {
+
+        let currBoard = board.getBoard();
+        let bestScore = -Infinity;
+        let bestMove;
+
+        for(let i = 0; i < currBoard.length; i++) {
+            if(currBoard[i].getValue() == ""){
+
+                // first children of the tree
+                currBoard[i].setValue(players[1].token);
+                let score = _miniMax(currBoard, 0, false);
+                let bruh = currBoard.map((cell) => cell.getValue());
+                console.log(bruh);
+                
+                currBoard[i].clearValue();
+                if(score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
+            }
+        }
+        playTurn(bestMove);
+    }
+
+    const _miniMax = (currBoard, isMaximizing) => {
+
+        // check for winner
+        // check for terminal state and associated score
+        // to be refactored if there's more than 2 players
+
+        if(checkWin(players[0])){
+            return -1
+        }
+        if(checkWin(players[1])){
+            return 1;
+        }
+        if(checkTie()){
+            return 0;
+        }
+
+        // for maximizing player
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            // check all possible spots
+            for (let i = 0; i < currBoard.length; i++){
+                if(currBoard[i].getValue() == "")
+                {
+                    currBoard[i].setValue(players[1].token);
+                    let score =_miniMax(currBoard, false);
+                    currBoard[i].clearValue();
+                    bestScore = Math.max(score, bestScore);
+                }
+            }
+            return bestScore;
+        }else{
+            // for minimizing player
+            let bestScore = Infinity;
+            // check all possible spots
+            for (let i = 0; i < currBoard.length; i++){
+                if(currBoard[i].getValue() == "")
+                {
+                    currBoard[i].setValue(players[0].token);
+                    let score = _miniMax(currBoard, true);
+                    currBoard[i].clearValue();
+                    bestScore = Math.min(score, bestScore);
+                }
+            }
+            return bestScore;
+        }
     }
 
     const playTurn = (move) => {
@@ -196,27 +270,32 @@ function GameController() {
             console.log("space already taken, make another choice");
         }else{
 
-            if(checkWin())
+            if(checkWin(activePlayer))
             {
-                board.printBoard();
-                _printWin();
+                //board.printBoard();
+                //_printWin();
                 return;
             }else if(checkTie()){
-                _printTie();
+                //_printTie();
                 return;
             }
             _switchPlayerTurn();
         }
 
-        _printNewRound();
-
         if(gameType == "PVE_EASY" && activePlayer == players[1]){
             easyCompMove();
+        }
+        if(gameType == "PVE_IMPOSSIBLE" && activePlayer == players[1]){
+            adversaryMove();
         }
     };
 
     return {getGameType, setGameType, startGame, playTurn, getPlayers, getActivePlayer, checkWin, checkTie, getBoard: board.getBoard, getSpaces: board.getSpaces, clearBoard: board.clearBoard};
 }
+
+
+
+
 
 (function ScreenController() {
 
@@ -248,6 +327,14 @@ function GameController() {
     const pveEasyDiv = document.querySelector(".pve-easy");
     pveEasyDiv.addEventListener("click", () => {
         game.setGameType("PVE_EASY");
+        game.startGame(game.getGameType());
+        updateScreen();
+        modalDiv.close();
+    })
+
+    const pveImpossibleDiv = document.querySelector(".pve-impossible");
+    pveImpossibleDiv.addEventListener("click", () => {
+        game.setGameType("PVE_IMPOSSIBLE");
         game.startGame(game.getGameType());
         updateScreen();
         modalDiv.close();
@@ -296,7 +383,7 @@ function GameController() {
         updateScreen();
 
         // check win
-        if(game.checkWin()) {
+        if(game.checkWin(game.getActivePlayer())) {
             winDiv.textContent = `${game.getActivePlayer().name} wins!`;
 
             // remove ability to place new move
