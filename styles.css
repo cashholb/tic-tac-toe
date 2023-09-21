@@ -206,6 +206,8 @@ a img {
 
     .cell {
         font-size: 2.3rem;
+        width: 50px; /* Adjust the width to fit within the smaller grid */
+        height: 50px;
     }
 
     .gameboard {
